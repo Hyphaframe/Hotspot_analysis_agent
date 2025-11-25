@@ -103,12 +103,7 @@ def main():
         st.markdown("### 关于")  
         st.markdown("""  
         这是Deep Search Agent的LangGraph版本,使用声明式图结构实现研究工作流。  
-          
-        **新特性:**  
-        - 可视化工作流  
-        - 内置检查点机制  
-        - 更好的可观测性  
-        - 自动读取配置文件  
+ 
         """)  
       
     # 主界面  

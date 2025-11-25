@@ -50,66 +50,68 @@ class DeepSearchAgent:
             base_url="https://api.siliconflow.cn/v1"  # 硅基流动的 API 端点  
         )
 
-    def research(self, query: str, save_report: bool = True) -> str:
-        """
-        执行深度研究
+    # def research(self, query: str, save_report: bool = True) -> str:
+    #     """
+    #     执行深度研究
 
-        Args:
-            query: 研究查询
-            save_report: 是否保存报告到文件
+    #     Args:
+    #         query: 研究查询
+    #         save_report: 是否保存报告到文件
 
-        Returns:
-            最终报告内容
-        """
-        print(f"\n{'=' * 60}")
-        print(f"开始深度研究: {query}")
-        print(f"{'=' * 60}")
+    #     Returns:
+    #         最终报告内容
+    #     """
+    #     print(f"\n{'=' * 60}")
+    #     print(f"开始深度研究: {query}")
+    #     print(f"{'=' * 60}")
 
-        try:
-            # 准备初始状态
-            initial_state: AgentState = {
-                "query": query,
-                "report_title": "",
-                "paragraphs": [],
-                "current_paragraph_index": 0,
-                "reflection_count": 0,
-                "max_reflections": self.config.max_reflections,
-                "final_report": None,
-                "completed": False
-            }
+    #     try:
+    #         # 准备初始状态
+    #         initial_state: AgentState = {
+    #             "query": query,
+    #             "report_title": "",
+    #             "paragraphs": [],
+    #             "current_paragraph_index": 0,
+    #             "reflection_count": 0,
+    #             "max_reflections": self.config.max_reflections,
+    #             "final_report": None,
+    #             "completed": False
+    #         }
 
-            # 准备配置
-            config = {
-                "configurable": {
-                    "llm_client": self.llm_client,
-                    "tavily_api_key": self.config.tavily_api_key,
-                    "max_search_results": self.config.max_search_results,
-                    "search_timeout": self.config.search_timeout,
-                    "max_content_length": self.config.max_content_length,
-                    "max_reflections": self.config.max_reflections},
-                    "recursion_limit": 100
-            }
+    #         # 准备配置
+    #         config = {
+    #             "configurable": {
+    #                 "llm_client": self.llm_client,
+    #                 "tavily_api_key": self.config.tavily_api_key,
+    #                 "max_search_results": self.config.max_search_results,
+    #                 "search_timeout": self.config.search_timeout,
+    #                 "max_content_length": self.config.max_content_length,
+    #                 "max_reflections": self.config.max_reflections},
+    #                 "recursion_limit": 100
+    #         }
 
-            # 执行图
-            print("\n执行研究工作流...")
-            final_state = self.graph.invoke(initial_state, config)
+    #         # 执行图
+    #         print("\n执行研究工作流...")
+    #         final_state = self.graph.invoke(initial_state, config)
 
-            # 获取最终报告
-            final_report = final_state["final_report"]
+    #         # 获取最终报告
+    #         final_report = final_state["final_report"]
 
-            # 保存报告
-            if save_report:
-                self._save_report(final_report, query)
+    #         # 保存报告
+    #         if save_report:
+    #             self._save_report(final_report, query)
 
-            print(f"\n{'=' * 60}")
-            print("深度研究完成！")
-            print(f"{'=' * 60}")
+    #         print(f"\n{'=' * 60}")
+    #         print("深度研究完成！")
+    #         print(f"{'=' * 60}")
 
-            return final_report
+    #         return final_report
 
-        except Exception as e:
-            print(f"研究过程中发生错误: {str(e)}")
-            raise e
+    #     except Exception as e:
+    #         print(f"研究过程中发生错误: {str(e)}")
+    #         raise e
+
+    
 
     def _save_report(self, report_content: str, query: str):
         """保存报告到文件"""
