@@ -72,10 +72,10 @@ def reflection_search(state: AgentState, config: RunnableConfig) -> Dict[str, An
     updated_paragraphs[current_idx]["search_history"].append(search_record)
     updated_paragraphs[current_idx]["reflection_count"] += 1
 
-    return {
-        "paragraphs": updated_paragraphs
-    }
-
+    # return {
+    #     "paragraphs": updated_paragraphs
+    # }
+    return state
 
 def reflection_summary(state: AgentState, config: RunnableConfig) -> Dict[str, Any]:
     """
@@ -142,6 +142,7 @@ def reflection_summary(state: AgentState, config: RunnableConfig) -> Dict[str, A
     updated_paragraphs[current_idx]["content"] = updated_summary
     updated_paragraphs[current_idx]["latest_summary"] = updated_summary
 
-    return {
-        "paragraphs": updated_paragraphs
-    }
+    # return {
+    #     "paragraphs": updated_paragraphs
+    # }
+    return state

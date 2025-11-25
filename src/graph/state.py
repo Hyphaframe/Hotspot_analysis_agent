@@ -30,7 +30,8 @@ class AgentState(TypedDict):
 
     # 报告结构  
     report_title: str
-    paragraphs: Annotated[List[ParagraphState], add]  # 使用 add reducer 合并段落列表  
+    # paragraphs: Annotated[List[ParagraphState], add]  # 使用 add reducer 合并段落列表
+    paragraphs: List[ParagraphState]  
 
     # 流程控制  
     current_paragraph_index: int

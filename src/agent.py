@@ -86,7 +86,8 @@ class DeepSearchAgent:
                     "max_search_results": self.config.max_search_results,
                     "search_timeout": self.config.search_timeout,
                     "max_content_length": self.config.max_content_length,
-                    "max_reflections": self.config.max_reflections}
+                    "max_reflections": self.config.max_reflections},
+                    "recursion_limit": 100
             }
 
             # 执行图
