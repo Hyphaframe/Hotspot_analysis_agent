@@ -24,7 +24,7 @@ class Config:
     # 搜索配置
     
     max_search_results: int = 3
-    search_timeout: int = 240
+    search_timeout: int = 60
     max_content_length: int = 20000
     
     # Agent配置

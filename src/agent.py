@@ -50,68 +50,88 @@ class DeepSearchAgent:
             base_url="https://api.siliconflow.cn/v1"  # 硅基流动的 API 端点  
         )
 
-    # def research(self, query: str, save_report: bool = True) -> str:
-    #     """
-    #     执行深度研究
 
-    #     Args:
-    #         query: 研究查询
-    #         save_report: 是否保存报告到文件
+    from typing import Generator, Dict, Any, Optional   # 引入生成器类型提示
 
-    #     Returns:
-    #         最终报告内容
-    #     """
-    #     print(f"\n{'=' * 60}")
-    #     print(f"开始深度研究: {query}")
-    #     print(f"{'=' * 60}")
+    def research(
+        self,
+        query: str,
+        save_report: bool = True,
+        *,
+        stream_config: Optional[Dict[str, Any]] = None
+    ) -> Generator[Dict[str, Any], None, None]:
+        """
+        执行深度研究，以生成器方式实时返回节点进度与最终报告。
 
-    #     try:
-    #         # 准备初始状态
-    #         initial_state: AgentState = {
-    #             "query": query,
-    #             "report_title": "",
-    #             "paragraphs": [],
-    #             "current_paragraph_index": 0,
-    #             "reflection_count": 0,
-    #             "max_reflections": self.config.max_reflections,
-    #             "final_report": None,
-    #             "completed": False
-    #         }
+        Args:
+            query: 研究问题
+            save_report: 是否保存报告
+            stream_config: 透传给 graph.stream 的额外配置（如 debug、recursion_limit）
 
-    #         # 准备配置
-    #         config = {
-    #             "configurable": {
-    #                 "llm_client": self.llm_client,
-    #                 "tavily_api_key": self.config.tavily_api_key,
-    #                 "max_search_results": self.config.max_search_results,
-    #                 "search_timeout": self.config.search_timeout,
-    #                 "max_content_length": self.config.max_content_length,
-    #                 "max_reflections": self.config.max_reflections},
-    #                 "recursion_limit": 100
-    #         }
+        Yields:
+            {"node": 节点名, "state": 当前状态快照}
+            最后一条为 {"node": "completed", "report": 最终报告}
+        """
+        print(f"\n{'='*60}\n开始深度研究: {query}\n{'='*60}")
 
-    #         # 执行图
-    #         print("\n执行研究工作流...")
-    #         final_state = self.graph.invoke(initial_state, config)
+        try:
+            # 1. 初始状态
+            initial_state: AgentState = {
+                "query": query,
+                "report_title": "",
+                "paragraphs": [],
+                "current_paragraph_index": 0,
+                "reflection_count": 0,
+                "max_reflections": self.config.max_reflections,
+                "final_report": None,
+                "completed": False,
+            }
 
-    #         # 获取最终报告
-    #         final_report = final_state["final_report"]
+            # 2. 默认配置 & 支持外部透传
+            config = {
+                "configurable": {
+                    "llm_client": self.llm_client,
+                    "tavily_api_key": self.config.tavily_api_key,
+                    "max_search_results": self.config.max_search_results,
+                    "search_timeout": self.config.search_timeout,
+                    "max_content_length": self.config.max_content_length,
+                    "max_reflections": self.config.max_reflections,
+                },
+                "recursion_limit": 100,          # 防死循环兜底
+                "debug": False,                  # 默认关闭调试日志
+            }
+            if stream_config:
+                config.update(stream_config)
 
-    #         # 保存报告
-    #         if save_report:
-    #             self._save_report(final_report, query)
+            # 3. 流式执行
+            print("\n执行研究工作流...")
+            final_state = None
+            for chunk in self.graph.stream(initial_state, config):
+                node_name = next(iter(chunk))   # 更安全地取键
+                node_output = chunk[node_name]
+                final_state = node_output
 
-    #         print(f"\n{'=' * 60}")
-    #         print("深度研究完成！")
-    #         print(f"{'=' * 60}")
+                yield {"node": node_name, "state": node_output}
 
-    #         return final_report
+            # 4. 后处理
+            if not final_state:
+                raise RuntimeError("工作流未产生任何状态")
 
-    #     except Exception as e:
-    #         print(f"研究过程中发生错误: {str(e)}")
-    #         raise e
+            final_report = final_state.get("final_report")
+            if not final_report:
+                raise RuntimeError("最终报告为空，可能图未正确填充 final_report 字段")
 
-    
+            if save_report:
+                self._save_report(final_report, query)
+
+            print("\n深度研究完成！")
+            yield {"node": "completed", "report": final_report}
+
+        except Exception as e:
+            print(f"[research] 研究过程中发生错误: {e}")
+            raise
+
+        
 
     def _save_report(self, report_content: str, query: str):
         """保存报告到文件"""
