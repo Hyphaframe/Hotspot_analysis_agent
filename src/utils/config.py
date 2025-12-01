@@ -34,6 +34,12 @@ class Config:
     # 输出配置
     output_dir: str = "reports"
     save_intermediate_states: bool = False
+
+
+    # 热榜配置
+    hot_topics_refresh_interval: int = 300  # 5分钟  
+    max_hot_topics_display: int = 10  
+    enable_hot_topics: bool = True
     
     def validate(self) -> bool:
         """验证配置"""
