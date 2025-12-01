@@ -25,10 +25,10 @@ class Config:
     
     max_search_results: int = 3
     search_timeout: int = 60
-    max_content_length: int = 20000
+    max_content_length: int = 10000
     
     # Agent配置
-    max_reflections: int = 2
+    max_reflections: int = 1
     max_paragraphs: int = 5
     
     # 输出配置
