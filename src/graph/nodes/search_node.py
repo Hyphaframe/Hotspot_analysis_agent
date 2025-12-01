@@ -2,6 +2,7 @@
 初始搜索节点
 负责生成搜索查询并执行搜索
 """
+import json
 from typing import Dict, Any
 from datetime import datetime
 from ..state import AgentState, SearchRecord
@@ -20,12 +21,14 @@ def initial_search(state: AgentState, config: RunnableConfig) -> Dict[str, Any]:
     # 导入提示词
     from ...prompts.prompts import SYSTEM_PROMPT_FIRST_SEARCH
 
-    
+    hot_topic_info = state.get("hot_topic_info", {}) 
+
     # 生成搜索查询
 
     user_content = (
         f"\n\n查询主题: {state['query']}\n"
         f"段落标题: {current_paragraph['title']}\n"
+        f"热点信息: {json.dumps(hot_topic_info, ensure_ascii=False)}\n"
         f"段落内容: {current_paragraph['content']}"
         + SYSTEM_PROMPT_FIRST_SEARCH)
     

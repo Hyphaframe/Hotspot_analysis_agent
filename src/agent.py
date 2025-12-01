@@ -59,6 +59,7 @@ class DeepSearchAgent:
         self,
         query: str,
         save_report: bool = True,
+        hot_topic_info: Optional[Dict[str, Any]] = None, 
         *,
         stream_config: Optional[Dict[str, Any]] = None
     ) -> Generator[Dict[str, Any], None, None]:
@@ -81,6 +82,7 @@ class DeepSearchAgent:
             # 1. 初始状态
             initial_state: AgentState = {
                 "query": query,
+                "hot_topic_info": hot_topic_info,  # 传递完整的 HotTopic 信息
                 "report_title": "",
                 "paragraphs": [],
                 "current_paragraph_index": 0,
@@ -89,6 +91,8 @@ class DeepSearchAgent:
                 "final_report": None,
                 "completed": False,
             }
+
+            print(f"🤖 [DEBUG] Agent接收到热点信息: {hot_topic_info}")  
 
             # 2. 默认配置 & 支持外部透传
             config = {

@@ -6,6 +6,7 @@ from typing import Dict, Any
 from datetime import datetime
 from ..state import AgentState, SearchRecord
 from langgraph.types import RunnableConfig
+import json
 
 def reflection_search(state: AgentState, config: RunnableConfig) -> Dict[str, Any]:
 
@@ -16,9 +17,12 @@ def reflection_search(state: AgentState, config: RunnableConfig) -> Dict[str, An
 
     current_idx = state["current_paragraph_index"]
     current_paragraph = state["paragraphs"][current_idx]
+    hot_topic_info = state.get("hot_topic_info", {})
+
 
     user_content1 = (
         f"\n\n查询主题: {state['query']}\n"
+        f"热点信息: {json.dumps(hot_topic_info, ensure_ascii=False)}\n"
         f"段落标题: {current_paragraph['title']}\n"
         f"段落内容: {current_paragraph['content']}\n"
         f"当前总结: {current_paragraph['latest_summary']}\n"

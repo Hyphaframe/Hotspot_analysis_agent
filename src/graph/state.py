@@ -28,6 +28,9 @@ class AgentState(TypedDict):
     # 输入  
     query: str
 
+    # 热点话题信息  
+    hot_topic_info: Optional[Dict[str, Any]]  # 存储完整的HotTopic信息  
+
     # 报告结构  
     report_title: str
     # paragraphs: Annotated[List[ParagraphState], add]  # 使用 add reducer 合并段落列表
